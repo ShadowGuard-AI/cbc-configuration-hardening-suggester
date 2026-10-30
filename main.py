@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 import yaml
 import json
 from jsonschema import validate, ValidationError, SchemaError
@@ -87,7 +88,12 @@ def generate_report(diff, baseline_data):
         for key, changes in diff.items():
             if key == 'values_changed':
                 for item, value in changes.items():
-                    item_path = item.split('[')[1].split(']')[0].split("']['")
+                    # DeepDiff paths look like root['server']['security'].
+                    # The old split chain kept only the first segment and
+                    # left its quotes on, so the baseline lookups below
+                    # missed on every real path and always fell back to
+                    # the default recommendation and Medium severity.
+                    item_path = re.findall(r"\['([^']+)'\]", item)
                     recommendation = find_recommendation(baseline_data, item_path)
                     severity = find_severity(baseline_data, item_path)
 
