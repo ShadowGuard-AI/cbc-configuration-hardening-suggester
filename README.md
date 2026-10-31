@@ -1,7 +1,7 @@
 ![Banner](banner.png)
 
 # cbc-Configuration-Hardening-Suggester
-Analyzes a system configuration and suggests hardening measures based on industry best practices (e.g., CIS benchmarks). Outputs a list of recommended changes with justifications and severity levels. Uses a data file of known hardening rules. Uses `pyyaml` for configuration parsing. - Focused on Compares system configuration files (e.g., YAML, JSON, INI) against predefined security baselines (expressed as JSON Schemas).  Highlights deviations using 'deepdiff' and generates reports indicating areas of non-compliance.  Supports remediation recommendations based on baseline rules.
+Validates a system configuration file (YAML) against a security baseline written as a JSON Schema. Every validation failure becomes one report item at the failing property path, carrying the schema error message and, where the baseline carries them at that path, a recommendation and a severity level. Where the baseline carries nothing for a path, the report shows a default note that no specific recommendation is available and a Medium severity. The run exits nonzero when the config fails validation, and prints the no issues line only when the config passes. Uses `pyyaml` for configuration parsing and `jsonschema` for validation.
 
 ## Install
 `git clone https://github.com/ShadowGuardAI/cbc-configuration-hardening-suggester`

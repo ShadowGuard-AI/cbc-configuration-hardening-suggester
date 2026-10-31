@@ -3,8 +3,8 @@ import logging
 import re
 import yaml
 import json
-from jsonschema import validate, ValidationError, SchemaError
-from deepdiff import DeepDiff
+import jsonschema
+from jsonschema import SchemaError
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -54,56 +54,49 @@ def load_baseline(baseline_file):
 def validate_config(config_data, baseline_data):
     """
     Validates the configuration data against the JSON Schema baseline.
-    Returns True if valid, False otherwise. Logs validation errors.
+    Returns a list of validation errors, empty when the config is valid.
+    Raises SchemaError when the baseline itself is not a valid schema.
     """
-    try:
-        validate(instance=config_data, schema=baseline_data)
-        return True
-    except ValidationError as e:
-        logging.error(f"Validation error: {e.message} at {e.json_path}")
-        return False
-    except SchemaError as e:
-        logging.error(f"Schema error: {e}")
-        return False
+    validator_cls = jsonschema.validators.validator_for(baseline_data)
+    validator_cls.check_schema(baseline_data)
+    validator = validator_cls(baseline_data)
+    # Sort by path so the report order is stable from run to run.
+    return sorted(
+        validator.iter_errors(config_data),
+        key=lambda e: [str(part) for part in e.path],
+    )
 
-def diff_config(config_data, baseline_data):
+def error_path(error):
     """
-    Compares the configuration data against the baseline data using DeepDiff.
-    Returns a dictionary of differences.
+    Returns the property path a validation error belongs to, as a list.
+    A 'required' error is reported at the parent object, so the missing
+    property named in its message is appended: that missing property is
+    the path the report item, and the baseline lookup, are about.
     """
-    try:
-        diff = DeepDiff(config_data, baseline_data, ignore_order=True)
-        return diff
-    except Exception as e:
-        logging.error(f"Error during diff: {e}")
-        raise
+    path = [str(part) for part in error.path]
+    if error.validator == "required":
+        match = re.match(r"'([^']+)' is a required property", error.message)
+        if match:
+            path.append(match.group(1))
+    return path
 
-def generate_report(diff, baseline_data):
+def generate_report(validation_errors, baseline_data):
      """
-     Generates a report of non-compliance based on the differences found.
-     Includes remediation recommendations from the baseline rules (if available).
+     Builds the non-compliance report from the validation errors: one
+     item per error, at that error's path, carrying the error message.
+     Recommendation and severity come from the baseline at that path
+     where the baseline carries them, and fall back to the defaults in
+     find_recommendation and find_severity where it carries nothing.
      """
      report = []
-     if diff:
-        for key, changes in diff.items():
-            if key == 'values_changed':
-                for item, value in changes.items():
-                    # DeepDiff paths look like root['server']['security'].
-                    # The old split chain kept only the first segment and
-                    # left its quotes on, so the baseline lookups below
-                    # missed on every real path and always fell back to
-                    # the default recommendation and Medium severity.
-                    item_path = re.findall(r"\['([^']+)'\]", item)
-                    recommendation = find_recommendation(baseline_data, item_path)
-                    severity = find_severity(baseline_data, item_path)
-
-                    report.append({
-                        "property": item,
-                        "old_value": value['old_value'],
-                        "new_value": value['new_value'],
-                        "recommendation": recommendation,
-                        "severity": severity
-                    })
+     for error in validation_errors:
+        item_path = error_path(error)
+        report.append({
+            "property": ".".join(item_path) if item_path else "root",
+            "message": error.message,
+            "recommendation": find_recommendation(baseline_data, item_path),
+            "severity": find_severity(baseline_data, item_path)
+        })
      return report
 
 def find_recommendation(baseline_data, item_path):
@@ -145,8 +138,7 @@ def print_report(report):
         print("Non-Compliance Report:")
         for item in report:
             print(f"  Property: {item['property']}")
-            print(f"    Old Value: {item['old_value']}")
-            print(f"    New Value: {item['new_value']}")
+            print(f"    Message: {item['message']}")
             print(f"    Recommendation: {item['recommendation']}")
             print(f"    Severity: {item['severity']}")
             print("-" * 30)
@@ -168,18 +160,24 @@ def main():
         config_data = load_config(args.config_file)
         baseline_data = load_baseline(args.baseline_file)
 
-        # Validate configuration against baseline
-        if not validate_config(config_data, baseline_data):
-            logging.warning("Configuration does not conform to the baseline.")
+        # Validate configuration against baseline. The validation
+        # errors are the report: a failed validation prints one item
+        # per error and exits nonzero, and the no issues line is
+        # printed only when validation passes.
+        validation_errors = validate_config(config_data, baseline_data)
 
-        # Diff configuration against baseline
-        diff = diff_config(config_data, baseline_data)
-
-        # Generate and print the report
-        report = generate_report(diff, baseline_data)
+        report = generate_report(validation_errors, baseline_data)
         print_report(report)
 
+        if validation_errors:
+            logging.error("Configuration does not conform to the baseline.")
+            exit(1)
 
+    except SchemaError as e:
+        logging.error(f"Schema error: {e.message}")
+        exit(1)
+    except SystemExit:
+        raise
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
         exit(1)
