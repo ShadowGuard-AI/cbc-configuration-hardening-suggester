@@ -75,6 +75,10 @@ def error_path(error):
     """
     path = [str(part) for part in error.path]
     if error.validator == "required":
+        # This depends on the exact wording of the library's message.
+        # A jsonschema version that phrases it differently leaves the
+        # path at the parent, and the report item then names the
+        # object instead of the missing property.
         match = re.match(r"'([^']+)' is a required property", error.message)
         if match:
             path.append(match.group(1))
@@ -103,6 +107,13 @@ def find_recommendation(baseline_data, item_path):
     """
     Finds the remediation recommendation in the baseline data for a given property path.
     """
+    # The walk goes through properties and nothing else. A baseline
+    # that nests through items, patternProperties, or a composed
+    # schema is never followed, so its recommendations are invisible
+    # here and the default text below is what the report shows. The
+    # severity lookup further down shares this limit and its own
+    # default, Medium, which is an invented severity for any property
+    # whose baseline entry carries none.
     current = baseline_data
     try:
         for part in item_path:
