@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" role="img" aria-label="The bench in three depths: window light breathing far off, a lapis sheen travelling down the weighed stack, a palette knife lifting at the bench front">
+<rect x="0" y="0" width="1200" height="360" fill="#ece5d2"/>
+<rect x="60" y="26" width="300" height="150" fill="#dfe4dc"/>
+<rect x="60" y="26" width="300" height="150" fill="#fffbe8" opacity="0.12">
+<animate attributeName="opacity" values="0.12;0.5;0.12" keyTimes="0;0.5;1" dur="18s" repeatCount="indefinite"/></rect>
+<rect x="60" y="26" width="300" height="150" fill="none" stroke="#5e442a" stroke-width="6"/>
+<line x1="210" y1="26" x2="210" y2="176" stroke="#5e442a" stroke-width="4"/>
+<circle cx="150" cy="60" r="2.2" fill="#fffdf2"><animateMotion dur="26s" repeatCount="indefinite" path="M0 0 L 260 90 L 520 30"/></circle>
+<circle cx="240" cy="44" r="1.8" fill="#fffdf2"><animateMotion dur="34s" repeatCount="indefinite" path="M0 0 L 200 110 L 430 60"/></circle>
+<rect x="0" y="252" width="1200" height="108" fill="#7a5c3e"/>
+<rect x="0" y="252" width="1200" height="10" fill="#987652"/>
+<g>
+<rect x="470" y="238" width="260" height="8" fill="#f8f5ec" stroke="#c4bdaa"/>
+<rect x="470" y="228" width="260" height="8" fill="#eee9da" stroke="#c4bdaa"/>
+<rect x="470" y="218" width="260" height="8" fill="#f8f5ec" stroke="#c4bdaa"/>
+<rect x="474" y="208" width="260" height="8" fill="#eee9da" stroke="#c4bdaa"/>
+<rect x="470" y="198" width="260" height="8" fill="#f8f5ec" stroke="#c4bdaa"/>
+<rect x="470" y="188" width="260" height="8" fill="#eee9da" stroke="#c4bdaa"/>
+<rect x="470" y="178" width="260" height="8" fill="#f8f5ec" stroke="#c4bdaa"/>
+<rect x="470" y="168" width="260" height="10" fill="#fcfaf3"/>
+<rect x="466" y="96" width="268" height="150" fill="#27407c" opacity="0">
+<animate attributeName="opacity" values="0;0.34;0.34;0;0" keyTimes="0;0.08;0.2;0.3;1" dur="12s" repeatCount="indefinite"/></rect>
+<rect x="470" y="96" width="6" height="150" fill="#4a66a8" opacity="0.85">
+<animate attributeName="y" values="96;96;226;226;96" keyTimes="0;0.1;0.55;0.8;1" dur="12s" repeatCount="indefinite" additive="replace" transform="translate(0 0)"/>
+<animate attributeName="height" values="10;10;10;10;10" dur="12s" repeatCount="indefinite"/></rect>
+<g fill="#3a3a40"><polygon points="505,168 585,168 576,146 514,146"/><path d="M522 146 A28 24 0 0 1 578 146" fill="none" stroke="#3a3a40" stroke-width="9"/>
+<polygon points="615,168 695,168 686,146 624,146"/><path d="M632 146 A28 24 0 0 1 688 146" fill="none" stroke="#3a3a40" stroke-width="9"/></g>
+</g>
+<g>
+<ellipse cx="392" cy="120" rx="17" ry="6" fill="#d2c9b4" stroke="#968e78" stroke-width="2">
+<animateTransform attributeName="transform" type="rotate" values="0 392 120;40 392 120;40 392 120;0 392 120" keyTimes="0;0.06;0.85;1" dur="12s" repeatCount="indefinite"/></ellipse>
+<rect x="368" y="118" width="48" height="128" fill="#e8e2d0" stroke="#968e78" stroke-width="2"/>
+<rect x="368" y="140" width="48" height="106" fill="#27407c"/>
+</g>
+<g>
+<animateTransform attributeName="transform" type="rotate" values="0 210 300;-4 210 300;-4 210 300;0 210 300" keyTimes="0;0.42;0.6;1" dur="12s" repeatCount="indefinite"/>
+<line x1="120" y1="306" x2="212" y2="300" stroke="#5e442a" stroke-width="9"/>
+<polygon points="212,292 268,300 212,310" fill="#babbbe" stroke="#787a7e"/>
+</g>
+</svg>

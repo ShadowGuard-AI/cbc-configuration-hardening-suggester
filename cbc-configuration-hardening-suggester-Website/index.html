@@ -3,164 +3,95 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cbc Configuration Hardening Suggester: what it is, how it runs, where it stops</title>
-<meta name="description" content="Cbc Configuration Hardening Suggester is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.">
+<title>cbc-configuration-hardening-suggester: The Print Shop's Dampened Paper Stack</title>
+<meta name="description" content="Validates a YAML system configuration against a JSON Schema security baseline and reports every failure at its property path.">
 <style>
-:root {
-  --bg: #101214; --panel: #1c1f22; --ink: #eee8dc;
-  --mut: #25292d;
-  --acc: #e8b339; --acc2: #c75432;
-  --line: #1c1f22;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font-family: Georgia, 'Times New Roman', serif; line-height: 1.55; }
-code, pre, .mono { font-family: 'Courier New', monospace; }
-a { color: var(--acc2); }
-.hero { padding: 3rem 6vw 1rem; }
-.hero img.banner { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; }
-.logo { width: 92px; height: 92px; border-radius: 18px;
-  border: 1px solid var(--line); }
-h1 { font-size: 2.4rem; margin: 0.4em 0 0.1em; }
-h2 { border-bottom: 2px solid var(--acc); padding-bottom: 0.2em;
-  margin-top: 2em; }
-.lede { font-size: 1.15rem; max-width: 62ch; }
-main { padding: 0 6vw 3rem; max-width: 1180px; margin: 0 auto; }
-.grid { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.card { background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; padding: 1rem 1.2rem; }
-.card.pop { animation: rise 0.7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; } }
-pre.code { background: #101014; color: #e8e6df; padding: 1rem 1.2rem;
-  border-radius: 12px; overflow-x: auto; font-size: 0.86rem;
-  border-left: 5px solid var(--acc); }
-table { border-collapse: collapse; width: 100%; }
-td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.6rem;
-  text-align: left; }
-.shots { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.shots img { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; background: #f4f1e8; }
-footer { padding: 2rem 6vw; border-top: 1px solid var(--line);
-  color: var(--mut); }
-.rail { display: flex; gap: 1.2rem; align-items: flex-start; }
-.rail nav { position: sticky; top: 1rem; min-width: 180px; }
-@media (max-width: 760px) { .rail { flex-direction: column; }
-  .rail nav { position: static; } }
-@media (prefers-reduced-motion: reduce) {
-  .card.pop { animation: none; } * { scroll-behavior: auto; } }
+@font-face{font-family:'Bitcount Single Ink';src:url('fonts/BitcountSingleInk.ttf') format('truetype');}
+@font-face{font-family:'Bitter';src:url('fonts/Bitter.ttf') format('truetype');}
+:root{--gesso:#f4efe3;--paper:#fbf8ef;--bole:#8e3b2c;--lapis:#27407c;--gold:#c9a227;--ink:#2c2620;--rim:#7d7466}
+*{box-sizing:border-box}body{margin:0;background:var(--gesso);color:var(--ink);font-family:'Bitter',serif;line-height:1.65}
+h1,h2,h3{font-family:'Bitcount Single Ink',monospace;color:var(--lapis)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;background:var(--gesso)}
+.hero img.heroimg{width:100%;height:58vh;object-fit:cover;display:block}
+.hero .in{padding:1rem 6vw 2rem;max-width:1120px;margin:0 auto;width:100%}
+.logo{width:210px}
+main{padding:0 6vw 3rem;max-width:1120px;margin:0 auto}
+nav{display:flex;gap:.9rem;flex-wrap:wrap;margin:1.2rem 0}
+.block{display:inline-block;text-decoration:none;font-family:'Bitcount Single Ink',monospace;font-size:.95rem;color:var(--lapis);padding:.6rem 1.2rem;background:repeating-linear-gradient(0deg,#fbf8ef 0 3px,#f3eee0 3px 4px);border:2px solid var(--rim);box-shadow:inset 0 0 0 4px #e7dfc9;position:relative;transition:background .2s}
+.block:hover{background:radial-gradient(circle at 50% 50%,#e8ddba,#fbf8ef 75%)}
+.block:active{background:linear-gradient(100deg,transparent 30%,rgba(39,64,124,.35) 50%,transparent 70%),#fbf8ef}
+.block:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.block::before{content:none}
+a{color:var(--lapis)}
+a::before{content:'';display:inline-block;width:15px;height:9px;margin-right:.45em;background:linear-gradient(180deg,#c9cbce,#9a9ca0);clip-path:polygon(0 35%,70% 35%,100% 50%,70% 65%,0 65%);vertical-align:1px}
+a:hover::before{background:linear-gradient(90deg,#fff,#9a9ca0)}
+.sheet{background:var(--paper);border:1px solid #d8d0ba;border-radius:2px 14px 3px 12px;box-shadow:0 2px 8px rgba(60,50,30,.14);padding:.4rem 1.5rem 1.3rem;margin:1.8rem 0;position:relative}
+.sheet::after{content:'';position:absolute;top:10px;right:12px;width:26px;height:16px;background:#3a3a40;clip-path:polygon(8% 100%,92% 100%,80% 30%,20% 30%);border-top:6px solid #3a3a40}
+.dye{height:12px;margin:2.2rem 0;background:linear-gradient(90deg,transparent,var(--lapis) 30%,var(--lapis) 70%,transparent);background-size:100% 3px;background-position:0 5px;background-repeat:no-repeat;position:relative}
+.dye::after{content:'';position:absolute;left:50%;top:0;width:4px;height:12px;background:var(--bole)}
+pre{background:#efe9d6;color:var(--ink);padding:1rem;overflow-x:auto;font-size:.95rem;border-left:5px solid var(--bole)}
+.slot{border:2px dashed var(--rim);padding:.8rem 1rem;margin:.7rem 0;font-family:'Bitcount Single Ink',monospace;color:var(--bole);background:#f7f2e2}
+.jarlab{background:#f6ecd4;color:var(--bole);border:1px solid #c9b98a;border-radius:3px;padding:.3rem 1.2rem 1rem;margin:1rem 0}
+.pin{display:flex;gap:1rem;padding:.5rem 0;border-bottom:1px solid #ddd3b8}
+.pin b{font-family:'Bitcount Single Ink',monospace;min-width:70px;color:var(--lapis)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+footer{padding:1rem 6vw 2.4rem;max-width:1120px;margin:0 auto}
 </style>
 </head>
-<body class="layout-rail">
-<!-- This page exists for cbc-configuration-hardening-suggester alone: the layout (sidebar-rail),
-     the colors, and the type were picked for this project, not
-     shared with the other project pages. The code block below is
-     copied from the file it names, line for line. If it looks
-     plain, that is because the project is plain, and I would
-     rather the page match the project than dress it up. The one
-     thing I will not do here is oversell: what this project does
-     not do is stated on the page, not hidden from it. -->
+<body>
 <header class="hero">
-  <img class="logo" src="assets/logo.png" alt="Cbc Configuration Hardening Suggester logo">
-  <img class="banner" src="assets/banner.png" alt="">
-  <h1>Cbc Configuration Hardening Suggester</h1>
-  <p class="mono"><a href="https://github.com/ShadowGuard-AI/cbc-configuration-hardening-suggester">github.com/ShadowGuard-AI/cbc-configuration-hardening-suggester</a></p>
+<img class="heroimg" src="assets/intro-banner.png" alt="A print shop bench in north light: a dampened paper stack under two iron weights, pigment jars behind, palette knives on a cloth, no text">
+<div class="in">
+<img class="logo" src="assets/logo.png" alt="A bole red cast iron paper stack weight with paper escaping under its base, above the name in lapis">
+<h1>cbc-configuration-hardening-suggester</h1>
+<p>The bench laid out left to right the way a printer walks it. Prepared paper under a weight, and a baseline kept the same way: a standard on paper, held down until every sheet is checked against it.</p>
+<nav>
+<a class="block" href="#checks">What the Tool Checks</a>
+<a class="block" href="#report">Report Items, by Property Path</a>
+<a class="block" href="#running">Getting It and Running It</a>
+<a class="block" href="#controls">The Two Controls</a>
+<a class="block" href="#ends">How a Run Ends</a>
+</nav>
+</div>
 </header>
-
 <main>
-  <section class="rail">
-    <nav aria-label="on this page">
-      <p class="mono"><a href="#run">Run it</a><br>
-      <a href="#files">The files</a><br>
-      <a href="#sheets">The sheets</a><br>
-      <a href="https://github.com/ShadowGuard-AI/cbc-configuration-hardening-suggester">The repo</a></p>
-    </nav>
-    <div>
-      <p class="lede">Cbc Configuration Hardening Suggester is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.</p>
-      <div class="grid">
-        <div class="card pop"><h3>What it is</h3>
-          <p>Cbc Configuration Hardening Suggester: 5 files, 264 counted
-          lines across Python 244, Markdown 17, Text 3. One job, done in the
-          open, in files you can read.</p></div>
-        <div class="card pop"><h3>The biggest piece</h3>
-          <p><code>main.py</code> carries the most
-          lines. If the project grows, that file is where the growth
-          lands first, for better or worse.</p></div>
-        <div class="card pop"><h3>The honest gap</h3>
-          <p>No test files yet. That is the honest gap, and the roadmap in the visuals folder says what the first one should cover.</p></div>
-      </div>
-      <section id="run">
-        <h2>Run it</h2>
-        <p>The repo README has the exact commands for this one. The
-        shape is the shape for most of my projects: clone it, read the
-        top file first so you know what will happen, then run it on
-        something you do not mind breaking.</p>
-        <p class="mono">$ git clone https://github.com/ShadowGuard-AI/cbc-configuration-hardening-suggester.git<br>$ cd cbc-configuration-hardening-suggester</p>
-      </section>
-      
-  <section aria-label="real code">
-    <h2>The code, as it sits in the repo</h2>
-    <p>From <code>main.py</code>, line 10 on. I did
-    not tidy it for the page. What you see is what the file has.</p>
-    <pre class="code"><code>logging.basicConfig(level=logging.INFO, format=&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;)
-
-def setup_argparse():
-    &quot;&quot;&quot;
-    Sets up the argument parser for the command-line interface.
-    &quot;&quot;&quot;
-    parser = argparse.ArgumentParser(description=&quot;Analyzes system configuration and suggests hardening measures.&quot;)
-    parser.add_argument(&quot;config_file&quot;, help=&quot;Path to the system configuration file (YAML).&quot;)
-    parser.add_argument(&quot;baseline_file&quot;, help=&quot;Path to the security baseline file (JSON Schema).&quot;)
-    parser.add_argument(&quot;-v&quot;, &quot;--verbose&quot;, action=&quot;store_true&quot;, help=&quot;Enable verbose logging.&quot;)
-    return parser
-
-def load_config(config_file):
-    &quot;&quot;&quot;
-    Loads the system configuration from a YAML file.
-    Handles file not found and YAML parsing errors.
-    &quot;&quot;&quot;
-    try:
-        with open(config_file, &#x27;r&#x27;) as f:
-            config_data = yaml.safe_load(f)
-        return config_data
-    except FileNotFoundError:</code></pre>
-  </section>
-      <section id="files">
-        <h2>The files that matter</h2>
-        <table><tr><th>File</th><th>Lines</th></tr>
-        <tr><td><code>main.py</code></td><td>244</td></tr>
-        <tr><td><code>README.md</code></td><td>17</td></tr>
-        <tr><td><code>requirements.txt</code></td><td>3</td></tr>
-        <tr><td><code>banner.png</code></td><td>0</td></tr>
-        <tr><td><code>logo.png</code></td><td>0</td></tr>
-        </table>
-        <p>Names doing the work: <span class="mono">setup_argparse, load_config, load_baseline, validate_config, error_path, generate_report, find_recommendation, find_severity, print_report</span>.</p>
-      </section>
-      <section id="sheets">
-        <h2>Drawn by hand</h2>
-        <p>I sketch my projects on notebook paper so I have to
-        understand them well enough to draw them. The full set,
-        with the counts and how they were counted, is the
-        <a href="https://github.com/ShadowGuard-AI/cbc-configuration-hardening-suggester/tree/main/cbc-configuration-hardening-suggester-Visuals">cbc-configuration-hardening-suggester-Visuals</a>
-        folder in the repo. Nothing is drawn over the binder holes.
-        That is a rule, not a style.</p>
-        <div class="shots">
-          <img src="assets/architecture.png" alt="Hand drawn architecture sheet for Cbc Configuration Hardening Suggester">
-          <img src="assets/flowchart.png" alt="Hand drawn flowchart sheet for Cbc Configuration Hardening Suggester">
-          <img src="assets/product-map.png" alt="Hand drawn product map sheet for Cbc Configuration Hardening Suggester">
-        </div>
-      </section>
-    </div>
-  </section>
+<section class="sheet" id="checks"><h2>First Stretch of the Bench: What the Tool Checks</h2>
+<p>cbc-configuration-hardening-suggester validates a system configuration file in YAML against a security baseline written as a JSON Schema, using pyyaml to parse the configuration and jsonschema to run the validation. That single job is stated whole, with no extra duties added.</p>
+<p><a class="block" href="#report">CHECK AGAINST THE BASELINE</a></p>
+</section>
+<div class="dye"></div>
+<section class="sheet" id="report"><h2>REPORT ITEMS, BY PROPERTY PATH</h2>
+<p>Every validation failure becomes one report item at the failing property path, carrying the schema error message, and, where the baseline carries them at that path, a recommendation and a severity level. Where the baseline carries nothing for a path, the report shows a default note that no specific recommendation is available and a Medium severity.</p>
+<div class="cards">
+<div class="sheet"><h3>Report Item, Fully Furnished</h3><p>Property path: the failing property, named at its path.</p><p>Schema error message: carried from the validation.</p><p>Recommendation: the one the baseline carries at that path.</p><p>Severity: the level the baseline carries at that path.</p></div>
+<div class="sheet"><h3>Report Item, Default Note</h3><p>Property path: the failing property, named at its path.</p><p>Schema error message: carried from the validation.</p><p>Recommendation: no specific recommendation is available.</p><p>Severity: Medium.</p></div>
+</div>
+</section>
+<div class="dye"></div>
+<section class="sheet" id="running"><h2>Third Stretch: Getting It and Running It</h2>
+<pre>git clone https://github.com/ShadowGuardAI/cbc-configuration-hardening-suggester</pre>
+<div class="jarlab"><h3>Jar label</h3><p>The clone line points at an account spelled differently from this repository's home: it writes ShadowGuardAI without the hyphen, while the repository lives under ShadowGuard-AI. The line is printed exactly as the README gives it, with its defect noted here rather than hidden.</p></div>
+<pre>./cbc-configuration-hardening-suggester [params]</pre>
+<p>The README names no argument for the configuration file and none for the baseline schema, even though both are the tool's whole subject, so two empty inventory slots sit on the bench where those arguments ought to be entered. The README also gives no install step for the pyyaml and jsonschema libraries its opening paragraph names.</p>
+<div class="slot">CONFIGURATION FILE, NOT NAMED IN THE README</div>
+<div class="slot">BASELINE SCHEMA, NOT NAMED IN THE README</div>
+</section>
+<div class="dye"></div>
+<section class="sheet" id="controls"><h2>Fourth Stretch: The Two Controls as Inventory Entries</h2>
+<div class="pin"><b>-h</b><span>Shows a help message and exits.</span></div>
+<div class="pin"><b>-v</b><span>Turns on verbose logging.</span></div>
+<p>Both entries are short and fully told, because the source tells them fully.</p>
+</section>
+<div class="dye"></div>
+<section class="sheet" id="ends"><h2>Last Stretch: How a Run Ends</h2>
+<p>A failing configuration makes the run exit nonzero, and the no issues line prints only when the configuration passes.</p>
+<p><a class="block" href="#checks">PRINT THE NO ISSUES LINE</a></p>
+<p>No example configuration, no baseline excerpt, and no sample report appear in the README, and this stretch says so in plain type rather than inventing one.</p>
+</section>
 </main>
 <footer>
-  <p>Cbc Configuration Hardening Suggester is one of my projects. This page was written
-  from the repo itself on 2026-10-30: the counts are the
-  repo's counts, the code is the repo's code, and the gaps are the
-  repo's gaps.</p>
+<div class="dye"></div>
+<p>Copyright line, reproduced as written in the README and labelled as a copyright line rather than a licence: Copyright (c) ShadowGuardAI, with no licence named.</p>
 </footer>
 </body>
 </html>

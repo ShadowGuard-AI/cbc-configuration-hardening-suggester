@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 24" width="100%" role="img" aria-label="Dye line divider, full width">
+<path d="M10 12 L1190 12" stroke="#27407c" stroke-width="2.4"/>
+<path d="M420 12 L780 12" stroke="#27407c" stroke-width="5.4"/>
+<line x1="600" y1="3" x2="600" y2="21" stroke="#8e3b2c" stroke-width="4"/>
+</svg>
