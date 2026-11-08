@@ -1,10 +1,10 @@
-![The print shop empty, the dampened paper stack resting under two iron weights, pigment jars behind and a palette knife at the bench front, no readable mark anywhere](intro-banner.png)
+![One marked orchard branch close up, its yellow paint ring sharp on the bark around a cut stub and a pruning saw blade resting beneath it, grey orchard rows soft behind](intro-banner.png)
 
 # cbc-configuration-hardening-suggester
 
-![Morning on the bench, the tall stack under its two weights and the name written in gold size along the bench front edge](banner.png)
+![A winter orchard in flat grey light: an arborist partway along the nearest row reaching up to a branch ringed with yellow paint at several points, a plain blank tag tied below the marked branch, rows of bare trees behind](banner.png)
 
-![Bole red cast iron paper stack weight with paper escaping under its base, the heading plate](logo.png)
+![One bare orchard branch against a plain grey sky, a single ring of yellow paint around the branch at its centre and a pruning saw resting below it, the heading plate](logo.png)
 
 ![Bench scene in three depths: the window light breathing, a lapis sheen travelling down the weighed stack sheet by sheet, a palette knife lifting at the bench front](scene.svg)
 
